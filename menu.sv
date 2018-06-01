@@ -128,6 +128,7 @@ localparam CONF_STR = {
 	"MENU;;"
 };
 
+wire f60Hz = 1;
 wire forced_scandoubler;
 wire  [1:0] buttons;
 wire [31:0] status;
@@ -224,7 +225,7 @@ always @(negedge CLK_VIDEO) begin
 		else ce_pix <= ~ce_pix;
 
 	if(ce_pix) begin
-		if(hc == 639) begin
+		if(hc == (f60Hz ? 533 : 639)) begin
 			hc <= 0;
 			if(vc == (forced_scandoubler ? 623 : 311)) begin 
 				vc <= 0;
@@ -247,11 +248,11 @@ reg VSync;
 
 reg ce_pix;
 always @(posedge CLK_VIDEO) begin
-	if (hc == 550) HBlank <= 1;
+	if (hc == (f60Hz ? 458 : 550)) HBlank <= 1;
 		else if (hc == 0) HBlank <= 0;
 
-	if (hc == 579) HSync <= 1;
-		else if (hc == 611) HSync <= 0;
+	if (hc == (f60Hz ? 483 : 579)) HSync <= 1;
+		else if (hc == (f60Hz ? 509 : 611)) HSync <= 0;
 
 	if(vc == (forced_scandoubler ? 609 : 304)) VSync <= 1;
 		else if (vc == (forced_scandoubler ? 617 : 308)) VSync <= 0;
